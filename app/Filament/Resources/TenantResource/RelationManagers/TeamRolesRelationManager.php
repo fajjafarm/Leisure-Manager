@@ -8,11 +8,9 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class TeamRolesRelationManager extends RelationManager
+class TenantRolesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'teamRoles';
-
-    protected static ?string $title = 'Team Roles';
+    protected static string $relationship = 'tenantRoles';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -21,20 +19,19 @@ class TeamRolesRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Role Name')
                     ->required()
                     ->maxLength(255),
 
                 Forms\Components\TextInput::make('rank')
-                    ->label('Rank (lower = higher)')
                     ->numeric()
                     ->default(100)
                     ->required(),
 
                 Forms\Components\Section::make('Permissions')
                     ->schema([
-                        Forms\Components\CheckboxList::make('permissions.team')
+                        Forms\Filament\Forms\Components\CheckboxList::make('permissions.team')
                             ->label('Team Management')
+                            ->multiple() // ← THIS FIXES ALL-SELECT BUG
                             ->options([
                                 'team.view' => 'View Team',
                                 'team.create' => 'Create Member',
@@ -43,8 +40,9 @@ class TeamRolesRelationManager extends RelationManager
                             ])
                             ->columns(2),
 
-                        Forms\Components\CheckboxList::make('permissions.equipment')
+                        \Filament\Forms\Components\CheckboxList::make('permissions.equipment')
                             ->label('Equipment & LOLER')
+                            ->multiple()
                             ->options([
                                 'equipment.view' => 'View Equipment',
                                 'equipment.create' => 'Add Equipment',
@@ -54,8 +52,9 @@ class TeamRolesRelationManager extends RelationManager
                             ])
                             ->columns(2),
 
-                        Forms\Components\CheckboxList::make('permissions.pools')
+                        \Filament\Forms\Filament\Forms\Components\CheckboxList::make('permissions.pools')
                             ->label('Pools & PWTAG')
+                            ->multiple()
                             ->options([
                                 'pools.view' => 'View Pool Logs',
                                 'pools.log' => 'Add Daily Test',
@@ -64,23 +63,26 @@ class TeamRolesRelationManager extends RelationManager
                             ])
                             ->columns(2),
 
-                        Forms\Components\CheckboxList::make('permissions.billing')
+                        \Filament\Forms\Components\CheckboxList::make('permissions.billing')
                             ->label('Billing')
+                            ->multiple()
                             ->options([
                                 'billing.view' => 'View Invoices',
                                 'billing.pay' => 'Make Payment',
                             ]),
 
-                        Forms\Components\CheckboxList::make('permissions.reports')
+                        \Filament\Forms\Components\CheckboxList::make('permissions.reports')
                             ->label('Reports')
+                            ->multiple()
                             ->options([
                                 'reports.training' => 'Training Reports',
                                 'reports.compliance' => 'Compliance Reports',
                                 'reports.equipment' => 'Equipment Reports',
                             ]),
 
-                        Forms\Components\CheckboxList::make('permissions.settings')
+                        \Filament\Forms\Components\CheckboxList::make('permissions.settings')
                             ->label('Settings')
+                            ->multiple()
                             ->options([
                                 'settings.edit' => 'Edit Settings',
                                 'settings.users' => 'Manage Users',
@@ -97,8 +99,7 @@ class TeamRolesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
-                    ->sortable()
-                    ->weight('semibold'),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('rank')
                     ->sortable()

@@ -35,8 +35,8 @@ class TenantRole extends Model
         return 'id';
     }
 
-    public function getKeyName()
-    {
-        return 'id';
-    }
+public function getRouteKeyName()
+{
+    return 'id'; // This forces ULID in URLs
+}
 }
